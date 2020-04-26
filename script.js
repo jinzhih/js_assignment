@@ -97,8 +97,9 @@ function generateCard(){
     const tech = CARD_TECHS[i];
     const card = createSingleCard(tech);
     cards.push(card);
-    // cards.push(card);
-     cards.unshift(card.cloneNode(true));
+     cards.push(card);
+     cards.push(card.cloneNode(true));
+    //  cards.unshift(card.cloneNode(true));
     }
 
     while(cards.length>0){
