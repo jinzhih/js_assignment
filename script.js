@@ -105,41 +105,56 @@ function handleCardFlip() {
     game.previousCard = null;
     return;
     // click the first card
-  } else {
+  } 
     currentCard.classList.add("card--flipped");
-  }
+    console.log(currentCard);
+    
+  
   //when click the second card, game.previous is not null, then compare
   if (game.previousCard) {
-    
-    if (currentCard.dataset.tech === game.previousCard.dataset.tech) {
-      unBindCardClick(currentCard);
-      unBindCardClick(game.previousCard);
-      game.previousCard = null;
-      game.clearCards+=2;
-      updateScore();
-      //check if the last card
-      if(game.clearCards === game.totalCards){
-        stopTimer();
-        setTimeout(()=> nextLevel(),1500);
-
-      }
-
-    } else {
-      console.log(game.previousCard);
-      game.cardcheckFinish = true;
-      setTimeout(()=>{
-        currentCard.classList.remove("card--flipped");
-        game.previousCard.classList.remove("card--flipped");
-        
-      },1000);
-        
-      game.previousCard =null;
-      
-    }
+    checkingCardMatch(currentCard,game.previousCard);
+    return;
     
   }
+ 
+  
+    
+    
 
   game.previousCard = currentCard;
+  
+  
+}
+function checkingCardMatch(card1,card2){
+  if (card1.dataset.tech === card2.dataset.tech) {
+    unBindCardClick(card1);
+    unBindCardClick(card2);
+    game.previousCard = null;
+    game.clearCards+=2;
+    updateScore();
+    
+    //check if the last card
+    if(game.clearCards === game.totalCards){
+      stopTimer();
+      setTimeout(()=> nextLevel(),1500);
+
+    }
+
+  } else {
+    console.log(game.previousCard);
+    game.cardcheckFinish = true;
+    
+    setTimeout(()=>{
+     
+      card1.classList.remove("card--flipped");
+      card2.classList.remove("card--flipped");
+      game.previousCard =null;
+      game.cardcheckFinish = false;
+    },1000);
+      
+    
+    
+  }
   
 }
 
@@ -246,3 +261,5 @@ function bindCardClick() {
     card.addEventListener("click", handleCardFlip);
   });
 }
+
+
