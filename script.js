@@ -29,7 +29,11 @@ const game = {
   gameboard: null,
   gameoverStatus: true,
   totalCards: 0,
+  cardcheckFinish: false,
   
+
+  previousCard: null,
+  clearCards:0,
 };
 
 setGame();
@@ -74,29 +78,68 @@ function startGame() {
   timeStart();
 }
 
-function timeStart(){
-  if(game.timerInterval){
-    stopTimer()
+function timeStart() {
+  if (game.timerInterval) {
+    stopTimer();
   }
   game.timer = 60;
   updateTimerDisplay();
-  game.timerInterval=setInterval(()=>{
-  game.timer--;
-  updateTimerDisplay();
+  game.timerInterval = setInterval(() => {
+    game.timer--;
+    updateTimerDisplay();
 
-  if(game.time===0){
-    handleGameOver();
-  }
-  },1000);
-
-  
-
-  
-  
-
+    if (game.time === 0) {
+      handleGameOver();
+    }
+  }, 1000);
 }
 
 function handleCardFlip() {
+  if (game.cardcheckFinish || game.gameoverStatus) {
+    return;
+  }
+  const currentCard = this;
+  // click one same card two times
+  if (currentCard === game.previousCard) {
+    currentCard.classList.remove("card--flipped");
+    game.previousCard = null;
+    return;
+    // click the first card
+  } else {
+    currentCard.classList.add("card--flipped");
+  }
+  //when click the second card, game.previous is not null, then compare
+  if (game.previousCard) {
+    
+    if (currentCard.dataset.tech === game.previousCard.dataset.tech) {
+      unBindCardClick(currentCard);
+      unBindCardClick(game.previousCard);
+      game.previousCard = null;
+      game.clearCards+=2;
+      updateScore();
+      //check if the last card
+      if(game.clearCards === game.totalCards){
+        stopTimer();
+        setTimeout(()=> nextLevel(),1500);
+
+      }
+
+    } else {
+      console.log(game.previousCard);
+      game.cardcheckFinish = true;
+      setTimeout(()=>{
+        currentCard.classList.remove("card--flipped");
+        game.previousCard.classList.remove("card--flipped");
+        
+      },1000);
+        
+      game.previousCard =null;
+      
+    }
+    
+  }
+
+  game.previousCard = currentCard;
   
 }
 
@@ -108,9 +151,9 @@ function handleGameOver() {
   game.gameoverStatus = true;
   game.startButton.innerHTML = "Start Game";
   game.timerDisplay.innerHTML = "60s";
-  game.timerDisplay.style.width ="100%";
-  if(game.timerInterval){
-    stopTimer()
+  game.timerDisplay.style.width = "100%";
+  if (game.timerInterval) {
+    stopTimer();
   }
 }
 
@@ -142,8 +185,7 @@ function generateCard() {
   while (cards.length > 0) {
     const index = Math.floor(Math.random() * cards.length);
     const card = cards.splice(index, 1)[0];
-    console.log(index);
-    console.log(card);
+   
     game.gameboard.appendChild(card);
   }
 }
@@ -164,19 +206,21 @@ function createSingleCard(tech) {
   return node;
 }
 
-function stopTimer(){
+function stopTimer() {
   clearInterval(game.timerInterval);
 }
 
 /*******************************************
 /     UI update
 /******************************************/
-function updateScore() {}
+function updateScore() {
+  game.scoreDisplay.innerHTML=game.level*2*game.timer;
+}
 
 function updateTimerDisplay() {
-  game.timerDisplay.innerHTML=`${game.timer}s`;
-  const percentage = (game.timer/60)*100;
-  game.timerDisplay.style.width = percentage+'%';
+  game.timerDisplay.innerHTML = `${game.timer}s`;
+  const percentage = (game.timer / 60) * 100;
+  game.timerDisplay.style.width = percentage + "%";
 }
 
 /*******************************************
@@ -192,13 +236,13 @@ function bindStartButton() {
   });
 }
 
-function unBindCardClick(card) {}
+function unBindCardClick(card) {
+  card.removeEventListener("click", handleCardFlip);
+}
 
 function bindCardClick() {
   const cards = document.querySelectorAll(".card");
-  cards.forEach(card=>{
-    card.addEventListener('click',handleCardFlip);
+  cards.forEach((card) => {
+    card.addEventListener("click", handleCardFlip);
   });
 }
-
-
