@@ -60,7 +60,7 @@ function setGame() {
 
 function startGame() {
   const { gameboard } = game;
-  console.log(game.gameboard);
+  
   while (gameboard.firstChild) {
     gameboard.removeChild(gameboard.firstChild);
   }
@@ -88,7 +88,7 @@ function timeStart() {
     game.timer--;
     updateTimerDisplay();
 
-    if (game.time === 0) {
+    if (game.timer === 0) {
       handleGameOver();
     }
   }, 1000);
@@ -158,11 +158,33 @@ function checkingCardMatch(card1,card2){
   
 }
 
-function nextLevel() {}
+function nextLevel() {
+  const { gameboard } = game;
+  
+  while (gameboard.firstChild) {
+    gameboard.removeChild(gameboard.firstChild);
+  }
+   console.log(game.level);
+  game.level=game.level+1;
+  console.log(game.level);
+  game.levelDisplay.innerHTML = game.level;
+  game.scoreDisplay.innerHTML = game.score;
+
+  game.gameoverStatus = false;
+  //game.startButton.innerHTML = "End Game";
+
+  // game.level.innerHTML = game.level;
+  // game.score.innerHTML = game.score;
+
+  generateCard();
+  bindCardClick();
+  timeStart();
+
+}
 
 function handleGameOver() {
-  game.levelDisplay.innerHTML = 5;
-  game.scoreDisplay.innerHTML = 30;
+  // game.levelDisplay.innerHTML = 5;
+  // game.scoreDisplay.innerHTML = 30;
   game.gameoverStatus = true;
   game.startButton.innerHTML = "Start Game";
   game.timerDisplay.innerHTML = "60s";
@@ -170,6 +192,7 @@ function handleGameOver() {
   if (game.timerInterval) {
     stopTimer();
   }
+  alert(`congratulations, your scores is ${game.score}`);
 }
 
 function generateCard() {
@@ -229,7 +252,9 @@ function stopTimer() {
 /     UI update
 /******************************************/
 function updateScore() {
-  game.scoreDisplay.innerHTML=game.level*2*game.timer;
+  game.score = game.score+game.level*2*game.timer
+  console.log(game.timer);
+  game.scoreDisplay.innerHTML=game.score;
 }
 
 function updateTimerDisplay() {
