@@ -252,7 +252,8 @@ function stopTimer() {
 /     UI update
 /******************************************/
 function updateScore() {
-  game.score = game.score+game.level*2*game.timer
+  // game.score = game.score+game.level*2*game.timer
+  game.score = game.score+Math.pow(game.level,2)*game.timer
   console.log(game.timer);
   game.scoreDisplay.innerHTML=game.score;
 }
